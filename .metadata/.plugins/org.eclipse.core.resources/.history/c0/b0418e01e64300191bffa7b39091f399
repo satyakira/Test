@@ -1,0 +1,32 @@
+package extentreports;
+
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+
+public class extentReport {
+	 static ExtentReports er1;
+	 static ExtentTest test;
+	 static String folder;
+	// for saving reports
+	public static  (String folder){
+	er1= new ExtentReports(folder,true);
+	
+	
+	}
+	
+	protected void information(){
+		er1.addSystemInfo("Automation Tool","Selenium");
+		er1.addSystemInfo("Framework","Hybrid Driven framework");
+		er1.addSystemInfo("Created by","Praveen kumar reddy");
+	}
+	public void endExtent(){
+		// end test
+        er1.endTest(test);
+        
+        // calling flush writes everything to the log file
+        er1.flush();
+	}
+
+	
+
+}

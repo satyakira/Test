@@ -1,0 +1,191 @@
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import com.codoid.products.fillo.Fillo;
+import com.codoid.products.fillo.Recordset;
+import com.opera.core.systems.scope.protos.EcmascriptProtos.EvalArg.Variable;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.codoid.products.exception.FilloException;
+
+
+public class FM {
+public static void main( String args[] ) throws FilloException, InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+	FM fm = new FM();
+
+int Testcount= FetchTestcount("Credentials");
+System.out.println("Totalcount"+Testcount);
+for (int i = 0; i < Testcount; i++) {
+	String TestCase= FetchTestID( "Credentials");
+	System.out.println("Testcase is"+TestCase);/// test case
+	
+	String kjf = FetchValue( "Credentials",TestCase,"HighLevelComplexAction");
+	
+	
+	
+	//fm.getClass().getMethod(kjf).invoke(fm, TestCase);
+	
+	Class<?> c = Class.forName("FM");
+	Method method = c.getDeclaredMethod(kjf);
+	method.invoke(kjf, TestCase);
+	 
+
+	
+
+
+}
+//webDriver.Dispose() ;
+}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// below code to fetch any value of test_id
+public static String FetchValue(String Tablename, String Testid,String Feild) throws FilloException 
+      {
+Fillo fillo=new Fillo();
+com.codoid.products.fillo.Connection connection=fillo.getConnection("C:/Users/slingala/Test.xlsx");
+String strQuery="Select * from"+" " + Tablename +" "+ "where TestID='"+Testid+"'"  ;
+Recordset recordset=connection.executeQuery(strQuery);
+while(recordset.next())   {
+String PHN = (recordset.getField(Feild)); 
+strQuery = PHN;
+	                       }
+return strQuery;
+  }
+
+
+//below code to fetch Count of test_id
+public static int FetchTestcount(String Tablename) throws FilloException 
+       {
+Fillo fillo=new Fillo();
+com.codoid.products.fillo.Connection connection=fillo.getConnection("C:/Users/slingala/Test.xlsx");
+String strQuery="Select count(*) from"+" " + Tablename +" "+ "where ExecutionFlag='Y'"  ;
+Recordset recordset=connection.executeQuery(strQuery);
+ int count = recordset.getCount();
+ return count;           
+        }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public static void TestCallingFunction(String TestCase) throws FilloException, InterruptedException {
+	//String TestCase= FetchTestID( "Credentials");
+	System.out.println("Reached ");
+	System.out.println(TestCase);
+	//System.out.println("Testcase is"+TestCase);/// test case
+	String Userid= FetchValue( "Credentials",TestCase,"Username");
+	String Userpwd= FetchValue( "Credentials",TestCase,"Pswd");
+	System.out.println("Phone number is "+Userid);
+	UpdateTestcase("Credentials","E",TestCase);//updating test case as E
+	System.setProperty("webdriver.chrome.driver", "C:/Users/slingala/chromedriver.exe");
+	WebDriver driver=new ChromeDriver();
+	driver.get("https://mail.miraclesoft.com/");	
+	driver.manage().window().maximize();
+	TimeUnit.SECONDS.sleep(10);
+	System.out.println(Userid);
+	driver.findElement(By.xpath("//*[@name='username']")).sendKeys(Userid);  
+	System.out.println(Userpwd);
+	driver.findElement(By.xpath("//*[@name='password']")).sendKeys(Userpwd);
+	driver.findElement(By.xpath("//*[@name='mysubmit']")).click();
+	TimeUnit.SECONDS.sleep(10);
+
+
+	if (driver.findElement(By.xpath("//*[@aria-label='Satya Kiran Lingala']")).isDisplayed()) 
+	     {    
+	UpdateTestcase("Credentials","P",TestCase);
+	driver.findElement(By.xpath("//*[@id='DWT29_dropdown']")).click();
+	driver.findElement(By.xpath("//*[@id='logOff_title']")).click();
+	driver.close();
+	       }
+
+	else{
+		UpdateTestcase("Credentials","F",TestCase);
+	    }
+	
+	
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+//below code to fetch  test_id
+public static String FetchTestID(String Tablename)
+     {
+try {
+	Fillo fillo=new Fillo();
+	com.codoid.products.fillo.Connection connection=fillo.getConnection("C:/Users/slingala/Test.xlsx");
+	String strQuery="Select Distinct TestID from"+" " + Tablename +" "+ "where ExecutionFlag='Y' and Status=''"  ;
+	Recordset recordset=connection.executeQuery(strQuery);
+	while(recordset.next())   {
+	String PHN = (recordset.getField("TestID")); 
+	Tablename= PHN;
+		                       }
+	//return strQuery;
+} 
+catch (Exception e) {
+	
+	System.out.println("No tc to execute");
+	System.exit(0);
+}
+return Tablename ;
+  }
+      
+
+//below code is to update status  of test_id
+public static void UpdateTestcase(String Tablename,String Expstatus, String Testid) throws FilloException 
+     {
+	String query="Update"+" "+Tablename+" "+ "set Status='"+Expstatus+"' where TestID='"+Testid+"' ";
+	String 	fileName="C:/Users/slingala/Test.xlsx";
+		 Fillo fillo = new Fillo();
+	        com.codoid.products.fillo.Connection connection = fillo.getConnection(fileName);
+	        connection.executeUpdate(query);
+	        connection.close();
+         
+      }
+
+
+
+
+
+
+      }
+
+
+
