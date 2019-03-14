@@ -110,7 +110,7 @@ public static void TestCallingFunction1(String TestCase) throws FilloException, 
 	String Userpwd= FetchValue( "Credentials",TestCase,"Pswd");
 	System.out.println("Phone number is "+Userid);
 	UpdateTestcase("Credentials","E",TestCase);//updating test case as E
-	System.setProperty("webdriver.chrome.driver", "C:/Users/slingala/chromedriver.exe");
+	/*System.setProperty("webdriver.chrome.driver", "C:/Users/slingala/chromedriver.exe");
 	WebDriver driver=new ChromeDriver();
 	driver.get("https://mail.miraclesoft.com/");	
 	driver.manage().window().maximize();
@@ -135,7 +135,7 @@ public static void TestCallingFunction1(String TestCase) throws FilloException, 
 		UpdateTestcase("Credentials","F",TestCase);
 	    }
 	
-	
+	*/
 	
 	
 }
